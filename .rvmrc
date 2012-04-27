@@ -1,1 +1,1 @@
-rvm --create use ruby-1.8.7@middleman
+rvm --create use ree-1.8.7@middleman
