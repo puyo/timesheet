@@ -1,3 +1,244 @@
-%header
-%article
-%footer
+%form.well.form-inline.sign-in.hide
+  %input#username(type="text" placeholder="Username")
+  %input#password(type="password" placeholder="Password")
+  %input#sign_in.btn.btn-primary(type="submit" value="Sign in")
+
+.timesheet
+  %table.table
+    %thead
+      %tr
+        %th(colspan="7")
+          %form.form-inline.sign-out
+            %input#sign_out.btn(type="submit" value="Sign out")
+          .filters
+            %form.form-inline
+              .filter.date
+                .btn-group
+                  %input#filter_date(type="text" placeholder="Date")
+              .filter.person
+                .btn-group
+                  %a#filter_person.btn.dropdown-toggle(data-toggle="dropdown" href="#")
+                    Person
+                    %span.caret
+                  %ul.dropdown-menu
+                    %li <a href="#">Greg</a>
+                    %li <a href="#">Sharon</a>
+              .filter.project
+                .btn-group
+                  %a#filter_person.btn.dropdown-toggle(data-toggle="dropdown" href="#")
+                    Project
+                    %span.caret
+                  %ul.dropdown-menu
+                    %li <a href="#">Protein One</a>
+                    %li <a href="#">P2300 - Davidson Institute - Homepage refresh</a>
+                    %li <a href="#">P2388 - Davidson Institute APRIL 2012 Maintenance</a>
+              .filter.job
+                .btn-group
+                  %a#filter_person.btn.dropdown-toggle(data-toggle="dropdown" href="#")
+                    Job
+                    %span.caret
+                  %ul.dropdown-menu
+                    %li <a href="#">01A - Accounts General</a>
+                    %li <a href="#">01B - Accounts Payable</a>
+                    %li <a href="#">01C - Accounts Receivable</a>
+
+      %tr
+        %th Date
+        %th Person
+        %th Project
+        %th Job
+        %th Hours
+        %th Description
+        %th
+
+    %tbody
+      %tr.time#time_110
+        %td
+          .date
+            %a(href="#") Thu Apr 26
+        %td
+          .person
+            %a(href="#") Greg
+        %td
+          .project
+            %a(href="#") Protein One
+        %td
+          .job
+            %a(href="#") 01B - Accounts General
+        %td
+          .hours
+            0.50
+        %td
+          .notes
+        %td
+          .actions
+            %button.btn Edit
+
+      %tr.time#time_111
+        %td
+          .date
+            %a(href="#") Thu Apr 26
+        %td
+          .person
+            %a(href="#") Greg
+        %td
+          .project
+            %a(href="#") P2300 - Davidson Institute - Homepage refresh
+        %td
+          .job
+            %a(href="#") 01A - Accounts Payable
+        %td
+          .hours
+            1.25
+        %td
+          .notes
+            Non functional prototype
+        %td
+          .actions
+            %button.btn Edit
+
+      %tr.time#time_112
+        %td
+          .date
+            %a(href="#") Thu Apr 26
+        %td
+          .person
+            %a(href="#") Greg
+        %td
+          .project
+            %a(href="#") Protein One
+        %td
+          .job
+            %a(href="#") 01C - Accounts Receivable
+        %td
+          .hours
+            0.25
+        %td
+          .notes
+            Stuff happened
+        %td
+          .actions
+            %button.btn Edit
+
+      %tr.time#time_121
+        %td
+          .date
+            %a(href="#") Thu Apr 26
+        %td
+          .person
+            %a(href="#") Greg
+        %td
+          .project
+            %a(href="#") Protein One
+        %td
+          .job
+            %a(href="#") 01B - Accounts General
+        %td
+          .hours
+            0.50
+        %td
+          .notes
+        %td
+          .actions
+            %button.btn Edit
+
+      %tr.time#time_122
+        %td
+          .date
+            %a(href="#") Thu Apr 26
+        %td
+          .person
+            %a(href="#") Greg
+        %td
+          .project
+            %a(href="#") P2300 - Davidson Institute - Homepage refresh
+        %td
+          .job
+            %a(href="#") 01A - Accounts Payable
+        %td
+          .hours
+            1.25
+        %td
+          .notes
+            Non functional prototype
+        %td
+          .actions
+            %button.btn Edit
+
+    %tbody.totals
+      %tr
+        %td(colspan="4")
+          .date
+            Thu Apr 26
+        %td(colspan="3")
+          .hours
+            2.5
+
+    %tbody
+      %tr.time#time_123
+        %td
+          .date
+            %a(href="#") Fri Apr 27
+        %td
+          .person
+            %a(href="#") Greg
+        %td
+          .project
+            %a(href="#") Protein One
+        %td
+          .job
+            %a(href="#") 01C - Accounts Receivable
+        %td
+          .hours
+            0.25
+        %td
+          .notes
+            Stuff happened
+        %td
+          .actions
+            %button.btn Edit
+
+    %tbody.totals
+      %tr
+        %td(colspan="4")
+          .date
+            Fri Apr 27
+        %td(colspan="3")
+          .hours
+            0.25
+
+    %tbody.new_time
+      %tr
+        %td
+          .date
+            %input#new_date(type="text" value="2012-04-27")
+        %td
+          .person
+            %select#new_person
+              %option Greg
+              %option Sharon
+        %td
+          .project
+            %select#new_project
+              %option Protein One
+              %option P2300 - Davidson Institute - Homepage refresh
+              %option P2388 - Davidson Institute APRIL 2012 Maintenance
+        %td
+          .job
+            %select#new_job
+              %option 01A - Accounts General
+              %option 01B - Accounts Payable
+              %option 01C - Accounts Receivable
+        %td
+          .hours
+            %input#new_hours(type="text" placeholder="Hours")
+        %td
+          .description
+            %input(type="text" placeholder="Description")
+
+        %td
+          .actions
+            %button.btn.btn-success Add
+  %footer
+
+= javascript_include_tag 'site'

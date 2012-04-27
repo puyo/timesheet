@@ -1,0 +1,74 @@
+@import "compass_twitter_bootstrap"
+@import "jquery-ui"
+
+body
+  margin: 20px
+
+
+.sign-in
+  .field
+    display: inline-block
+    margin-right: 20px
+  label
+    font-weight: bold
+
+.timesheet
+  form
+    margin: 0
+  thead
+    +clearfix
+    .sign-out
+      float: left
+    .filters
+      float: right
+      .filter
+        display: inline
+        .btn-group
+          display: block
+          float: left
+          margin-right: 5px
+        input
+          width: 70px
+
+      .dropdown-menu
+        left: auto
+        right: 0
+  .table
+    +clearfix
+  .with-close
+    position: relative
+    .close
+      cursor: pointer
+      position: absolute
+      right: 10px
+      top: 10px
+
+  .time
+    .hours
+      font-weight: bold
+
+  .new_time
+    .date
+      input
+        width: 70px
+    .person
+      select
+        width: 100px
+    .hours
+      input
+        width: 40px
+    .description
+      input
+        width: 110px
+
+  th
+    background-color: #eee
+  .totals
+    td
+      border-bottom: 3px solid #aaa
+      font-weight: bold
+      background-color: #eee
+
+.hidden
+  display: none
+
