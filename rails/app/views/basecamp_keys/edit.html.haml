@@ -1,0 +1,14 @@
+= form_for(@basecamp_key, :url => basecamp_key_path, :method => :put) do |f|
+  - if @basecamp_key.errors.any?
+    #error_explanation
+      %h2
+        = pluralize(@basecamp_key.errors.count, "error")
+        prohibited this user from being saved:
+      %ul
+        - @basecamp_key.errors.full_messages.each do |msg|
+          %li= msg
+  .field
+    = f.label :basecamp_api_token
+    = f.text_field :basecamp_api_token
+  .actions
+    = f.submit 'Update'

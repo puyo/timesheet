@@ -61,5 +61,9 @@ module Timesheet
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    config.generators.template_engine = :haml
+    config.generators.stylesheet_engine = :sass
+    config.sass.preferred_syntax = :sass
   end
 end
