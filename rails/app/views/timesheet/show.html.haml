@@ -52,8 +52,8 @@
         %th Description
         %th
 
-    %tbody
-      - @time_entries.each do |date, time_entries|
+    - @time_entries.each do |date, time_entries|
+      %tbody
         - total_hours = time_entries.map(&:hours).sum
         - time_entries.each do |time_entry|
           = content_tag_for(:tr, time_entry) do
@@ -62,22 +62,22 @@
             %td.person
               %a(href="#")= time_entry.person_name
             %td.project
-              = link_to image_tag('ajax-loader.gif'), '#', :data => {'project-url' => project_url(time_entry.project_id)}
+              = link_to image_tag('ajax-loader.gif'), '#', :data => {'project-url' => project_path(time_entry.project_id)}
             %td.job
-              = link_to image_tag('ajax-loader.gif'), '#', :data => {'todo-item-url' => todo_item_url(time_entry.todo_item_id)}
+              = link_to image_tag('ajax-loader.gif'), '#', :data => {'todo-item-url' => todo_item_path(time_entry.todo_item_id)}
             %td.hours
               %a(href="#")= time_entry.hours
             %td.notes
               %a(href="#")= time_entry.description
             %td.actions
               %button.btn Edit
-        %tbody.totals
-          %tr
-            %td(colspan="4")
-              .date
-                =date
-            %td(colspan="3")
-              .hours
-                =total_hours
+      %tbody.totals
+        %tr
+          %td(colspan="4")
+            .date
+              =date
+          %td(colspan="3")
+            .hours
+              =total_hours
   %footer
 

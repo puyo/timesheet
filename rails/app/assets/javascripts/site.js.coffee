@@ -19,19 +19,25 @@ $ ->
   $('#sign_in').click ->
     $('.sign-in').hide()
     $('.timesheet').show()
-  $('[data-project-url]').each ->
-    $el = $(@)
-    $.ajax(
-      url: $el.data('project-url')
-    ).done (data) ->
-      $el.text(data.project.name)
-  $('[data-todo-item-url]').each ->
-    $el = $(@)
-    $.ajax(
-      url: $el.data('todo-item-url')
-    ).done (data) ->
-      console.log data
-      $el.text(data.todo_item.content)
 
-  #$('#filter_date').datepicker(dateFormat: 'yy-mm-dd')
-  #$('#new_date').datepicker(dateFormat: 'yy-mm-dd')
+  projectUrls = $.map($('[data-project-url]'), (val, i) ->
+    $(val).data('project-url')
+  )
+  projectUrls = $.unique(projectUrls)
+  $.each(projectUrls, (i, url) ->
+    $.ajax(
+      url: url
+    ).done (data) ->
+      $('[data-project-url="' + url + '"]').text(data.project.name)
+  )
+
+  todoItemUrls = $.map($('[data-todo-item-url]'), (val, i) ->
+    $(val).data('todo-item-url')
+  )
+  todoItemUrls = $.unique(todoItemUrls)
+  $.each(todoItemUrls, (i, url) ->
+    $.ajax(
+      url: url
+    ).done (data) ->
+      $('[data-todo-item-url="' + url + '"]').text(data.todo_item.content)
+  )
