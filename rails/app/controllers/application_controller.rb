@@ -6,8 +6,7 @@ class ApplicationController < ActionController::Base
   def basecamp_auth!
     if session[:basecamp_api_token]
       begin
-        Basecamp.establish_connection!('protein-one.basecamphq.com', session[:basecamp_api_token], 'X', true)
-        @current_user = Basecamp::Person.me
+        BasecampKey.auth(session[:basecamp_api_token])
       rescue
         session[:basecamp_api_token] = nil
         redirect_to edit_basecamp_key_url
@@ -15,5 +14,9 @@ class ApplicationController < ActionController::Base
     else
       redirect_to edit_basecamp_key_url
     end
+  end
+
+  def me
+    @me ||= Basecamp::Person.me
   end
 end

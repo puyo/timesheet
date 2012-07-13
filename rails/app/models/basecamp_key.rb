@@ -20,4 +20,8 @@ class BasecampKey
   def persisted?
     false
   end
+
+  def self.auth(token)
+    Basecamp.establish_connection!('protein-one.basecamphq.com', token, 'X', true)
+  end
 end

@@ -20,5 +20,5 @@ $(document).ready ->
     $('.sign-in').hide()
     $('.timesheet').show()
 
-  $('#filter_date').datepicker(dateFormat: 'yy-mm-dd')
-  $('#new_date').datepicker(dateFormat: 'yy-mm-dd')
+  #$('#filter_date').datepicker(dateFormat: 'yy-mm-dd')
+  #$('#new_date').datepicker(dateFormat: 'yy-mm-dd')
