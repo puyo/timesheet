@@ -12,13 +12,26 @@
 #= require "bootstrap/bootstrap-typeahead"
 #= require "jquery-ui-1.8.19.custom.min"
 
-$(document).ready ->
+$ ->
   $('#sign_out').click ->
     $('.sign-in').show()
     $('.timesheet').hide()
   $('#sign_in').click ->
     $('.sign-in').hide()
     $('.timesheet').show()
+  $('[data-project-url]').each ->
+    $el = $(@)
+    $.ajax(
+      url: $el.data('project-url')
+    ).done (data) ->
+      $el.text(data.project.name)
+  $('[data-todo-item-url]').each ->
+    $el = $(@)
+    $.ajax(
+      url: $el.data('todo-item-url')
+    ).done (data) ->
+      console.log data
+      $el.text(data.todo_item.content)
 
   #$('#filter_date').datepicker(dateFormat: 'yy-mm-dd')
   #$('#new_date').datepicker(dateFormat: 'yy-mm-dd')

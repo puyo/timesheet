@@ -62,9 +62,9 @@
             %td.person
               %a(href="#")= time_entry.person_name
             %td.project
-              %a(href="#")= time_entry.project_id
+              = link_to image_tag('ajax-loader.gif'), '#', :data => {'project-url' => project_url(time_entry.project_id)}
             %td.job
-              %a(href="#")= time_entry.todo_item_id
+              = link_to image_tag('ajax-loader.gif'), '#', :data => {'todo-item-url' => todo_item_url(time_entry.todo_item_id)}
             %td.hours
               %a(href="#")= time_entry.hours
             %td.notes
@@ -80,3 +80,4 @@
               .hours
                 =total_hours
   %footer
+
