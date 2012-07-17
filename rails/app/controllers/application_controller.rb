@@ -15,8 +15,4 @@ class ApplicationController < ActionController::Base
       redirect_to edit_basecamp_key_url
     end
   end
-
-  def me
-    @me ||= Basecamp::Person.me
-  end
 end

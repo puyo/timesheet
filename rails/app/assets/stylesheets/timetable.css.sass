@@ -13,6 +13,12 @@ body
     font-weight: bold
 
 .timesheet
+  .loading
+    +background(inline-image('ajax-loader.gif'))
+    display: block
+    height: image-height('ajax-loader.gif')
+    width: image-width('ajax-loader.gif')
+
   form
     margin: 0
   thead
@@ -73,3 +79,11 @@ body
 .hidden
   display: none
 
+#time_entry_date
+  width: 80px
+#time_entry_person_id
+  width: 150px
+#time_entry_job_code
+  width: 30px
+#time_entry_hours
+  width: 50px

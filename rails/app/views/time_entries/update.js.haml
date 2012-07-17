@@ -1,0 +1,8 @@
+- if @time_entry.valid?
+  :plain
+    $item = $('tr#basecamp_time_entry_' + #{@time_entry.id});
+    $item.find('.loading').hide();
+- else
+  :plain
+    $item = $('tr#basecamp_time_entry_' + #{@time_entry.id});
+    $item.css('background-color', 'red');
