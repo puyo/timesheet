@@ -1,65 +1,18 @@
 class TimesheetController < ApplicationController
-  before_filter :basecamp_auth!
+  #before_filter :basecamp_auth!
   caches_action :show, :expires_in => 1.hour
  
   def show
-    get_data
-    #render :text => [@projects, @people, @time_entries].pretty_inspect
-    #return
-    #report = Basecamp::TimeEntry.report(:subject_id => me.id)
-  end
-
-  def old_show
-    @todo_items = {}
-    Basecamp::TodoList.find(:all).each do |todo_list|
-    end
-    @projects = {}
-    Basecamp::Project.all.each do |proj|
-      @projects[proj.id] = proj
-      Basecamp::TodoList.find(:all, :params => {:project_id => proj.id}).each do |todo_list|
-        todo_list.todo_items.each do |todo_item|
-          @todo_items[todo_item.id] = todo_item
-        end
-      end
-    end
-    @people = {}
-    Basecamp::Person.all.each do |person|
-      @people[person.id] = person
-    end
-    Basecamp::TimeEntry.report(:subject_id => me.id).each do |entry|
-      entry.project = @projects[entry.project_id]
-      entry.person = @projects[entry.person_id]
-      entry.todo_item = @todo_items[entry.todo_item_id]
-    end
-    @time_entries = report.group_by(&:date).sort_by{|date,entries| date}
-  end
-
-  private
-
-  def get_data
-    args = {
-      :method => 'get',
-      :headers => {
-        'Accept' => 'application/xml',
-        'Content-Type' => 'application/xml',
-      },
-      :timeout => 10_000, # milliseconds
-      :cache_timeout => 60, # seconds
-      :params => {:limit => 1_000_000},
-      :verbose => false,
-      :username => session[:basecamp_api_token],
-      :password => 'X',
-    }
-    @me = JSON.parse(Typhoeus::Request.get('https://protein-one.basecamphq.com/me.json', args).body)
-    projects_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/projects.json', args)
-    people_request = Typhoeus::Request.new("https://protein-one.basecamphq.com/companies/#{@me['firmId']}/people.json", args)
-    time_entries_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/time_entries/report.xml', args.dup.merge(:params => {:subject_id => @me['id']}))
+    @me = JSON.parse(Typhoeus::Request.get('https://protein-one.basecamphq.com/me.json', typhoeus_args).body)
+    projects_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/projects.json', typhoeus_args)
+    people_request = Typhoeus::Request.new("https://protein-one.basecamphq.com/companies/#{@me['firmId']}/people.json", typhoeus_args)
+    time_entries_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/time_entries/report.xml', typhoeus_args.dup.merge(:params => {:subject_id => @me['id']}))
 
     hydra = Typhoeus::Hydra.new
     hydra.queue projects_request
     hydra.queue people_request
     hydra.queue time_entries_request 
-    hydra.run # this is a blocking call that returns once all requests are complete
+    hydra.run
 
     projects_data = JSON.parse(projects_request.handled_response.body)
     people_data = JSON.parse(people_request.handled_response.body)

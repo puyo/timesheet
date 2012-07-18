@@ -71,6 +71,7 @@
               %a(href="#")= time_entry.description
             %td.actions
               = link_to 'Edit', edit_time_entry_path(time_entry), :class => 'edit_time_entry_link', :data => {'time-entry-id' => time_entry.id}
+              = link_to 'Delete', time_entry_path(time_entry), :confirm => 'Sure?', :method => :delete, :remote => true, :class => :delete_time_entry, :data => {'time-entry-id' => time_entry.id}
               %span.loading(style="display:none")
           = content_tag_for(:tr, time_entry, 'edit', :style => 'display:none', :data => {'time-entry-id' => time_entry.id}) do
             %td(colspan="7")
@@ -94,7 +95,7 @@
     %tbody.new_time_entry
       %tr
         %td(colspan="7")
-          = form_for @time_entry do |f|
+          = form_for @time_entry, :remote => true do |f|
             = f.text_field :date, :placeholder => 'Date'
             = f.select :person_id, options_for_select(@people.map{|person| [person['name'], person['id'].to_i]}, :selected => @me['id'])
             = f.select :project_id, options_for_select(@projects.map{|project| [project['name'], project['id'].to_i] }, :selected => session[:project_id])

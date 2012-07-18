@@ -15,4 +15,20 @@ class ApplicationController < ActionController::Base
       redirect_to edit_basecamp_key_url
     end
   end
+
+  def typhoeus_args
+    {
+      :method => 'get',
+      :headers => {
+        'Accept' => 'application/xml',
+        'Content-Type' => 'application/xml',
+      },
+      :timeout => 10_000, # milliseconds
+      :cache_timeout => 60, # seconds
+      :params => {:limit => 1_000_000},
+      :verbose => false,
+      :username => session[:basecamp_api_token],
+      :password => 'X',
+    }
+  end
 end
