@@ -12,10 +12,7 @@ class TimeEntriesController < ApplicationController
   def create
     #new_req = Typhoeus::Request.get("https://protein-one.basecamphq.com/projects/#{project_id}/time_entries/new.xml", typhoeus_args.merge(:verbose => true))
     #puts new_req.body
-    @response = Typhoeus::Request.post("https://protein-one.basecamphq.com/projects/#{project_id}/time_entries.xml", typhoeus_args.merge({
-      :verbose => true,
-      :body => xml,
-    }))
+    @response = basecamp(:post, "/projects/#{project_id}/time_entries.xml", :verbose => true, :body => xml)
     # Look up the job code they entered...
     if id = @response.headers_hash['Location'][/\d+$/]
       @time_entry = load_time_entry(id)
@@ -24,17 +21,12 @@ class TimeEntriesController < ApplicationController
   end
 
   def update
-    @response = Typhoeus::Request.put("https://protein-one.basecamphq.com/time_entries/#{params[:id]}.xml", typhoeus_args.merge({
-      :verbose => true,
-      :body => xml,
-    }))
+    @response = basecamp(:put, "/time_entries/#{params[:id]}.xml", :verbose => true, :body => xml)
     @id = params[:id] if @response.code == 200
   end
 
   def destroy
-    @response = Typhoeus::Request.delete("https://protein-one.basecamphq.com/time_entries/#{params[:id]}.xml", typhoeus_args.merge({
-      :verbose => true,
-    }))
+    @response = basecamp(:delete, "/time_entries/#{params[:id]}.xml", :verbose => true)
     @id = params[:id] if @response.code == 200
   end
 
@@ -57,14 +49,14 @@ class TimeEntriesController < ApplicationController
   end
 
   def fetch_data_for_index
-    @me = JSON.parse(Typhoeus::Request.get('https://protein-one.basecamphq.com/me.json', typhoeus_args).body)
-    projects_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/projects.json', typhoeus_args)
-    people_request = Typhoeus::Request.new("https://protein-one.basecamphq.com/companies/#{@me['firmId']}/people.json", typhoeus_args)
-    time_entries_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/time_entries/report.xml', typhoeus_args.merge(:params => {
+    @me = JSON.parse(basecamp(:get, '/me.json').body)
+    projects_request = basecamp(:new, '/projects.json')
+    people_request = basecamp(:new, "/companies/#{@me['firmId']}/people.json")
+    time_entries_request = basecamp(:new, '/time_entries/report.xml', :params => {
       :subject_id => @me['id'],
       :from => @from.gsub('-', ''),
       :to => @to.gsub('-', ''),
-    }))
+    })
 
     hydra = Typhoeus::Hydra.new
     hydra.queue projects_request
@@ -102,7 +94,7 @@ class TimeEntriesController < ApplicationController
   end
 
   def load_time_entry(id)
-    r = Typhoeus::Request.get("https://protein-one.basecamphq.com/time_entries/#{id}.xml", typhoeus_args)
+    r = basecamp(:get, "/time_entries/#{id}.xml")
     if r.code == 200
       data = XmlSimple.xml_in(r.body)
       time_entry_from_xml(data).tap{|result| result.id = id }
@@ -123,5 +115,13 @@ class TimeEntriesController < ApplicationController
       t.project_id = xml_data['project-id'].first['content'].to_i if xml_data['project-id']
       t.persisted = true
     end
+  end
+
+  def basecamp(method, path, args = {})
+    Typhoeus::Request.send(method, [basecamp_host, path].join, typhoeus_args.merge(args))
+  end
+
+  def basecamp_host
+    "https://protein-one.basecamphq.com"
   end
 end
