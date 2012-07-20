@@ -10,31 +10,30 @@ class TimeEntriesController < ApplicationController
   def create
     #new_req = Typhoeus::Request.get("https://protein-one.basecamphq.com/projects/#{project_id}/time_entries/new.xml", typhoeus_args.merge(:verbose => true))
     #puts new_req.body
-    req = Typhoeus::Request.post("https://protein-one.basecamphq.com/projects/#{project_id}/time_entries.xml", typhoeus_args.merge({
+    @response = Typhoeus::Request.post("https://protein-one.basecamphq.com/projects/#{project_id}/time_entries.xml", typhoeus_args.merge({
       :verbose => true,
       :body => xml,
     }))
-    if req.code == 200
-      puts req.body
+    return render :text => 'hi'
+    if id = @response.headers_hash['Location'][/\d+$/]
+      @time_entry = load_time_entry(id)
+      @time_entry.project_id = project_id
     end
-    render :text => 'hi', :status => req.code
   end
 
   def update
-    req = Typhoeus::Request.put("https://protein-one.basecamphq.com/time_entries/#{params[:id]}.xml", typhoeus_args.merge({
+    @response = Typhoeus::Request.put("https://protein-one.basecamphq.com/time_entries/#{params[:id]}.xml", typhoeus_args.merge({
       :verbose => true,
       :body => xml,
     }))
-    render :text => 'hi', :status => req.code
+    @id = params[:id] if @response.code == 200
   end
 
   def destroy
-    req = Typhoeus::Request.delete("https://protein-one.basecamphq.com/time_entries/#{params[:id]}.xml", typhoeus_args.merge({
+    @response = Typhoeus::Request.delete("https://protein-one.basecamphq.com/time_entries/#{params[:id]}.xml", typhoeus_args.merge({
       :verbose => true,
     }))
-    if req.code == 200
-      @id = params[:id]
-    end
+    @id = params[:id] if @response.code == 200
   end
 
   private
@@ -75,17 +74,8 @@ class TimeEntriesController < ApplicationController
 
     @projects = projects_data['records']
     @people = people_data['records']
-    @time_entries = time_entries_data['time-entry'].map do |te|
-      TimeEntry.new.tap do |t|
-        t.date = Date.parse(te['date'].first['content'])
-        t.description = te['description'].first
-        t.hours = te['hours'].first['content'].to_f
-        t.id = te['id'].first['content'].to_i
-        t.person_id = te['person-id'].first['content'].to_i
-        t.todo_item_id = te['todo-item-id'].first['content'].to_i
-        t.person_name = te['person-name'].first
-        t.project_id = te['project-id'].first['content'].to_i
-      end
+    @time_entries = time_entries_data['time-entry'].map do |xml_data|
+      time_entry_from_xml(xml_data)
     end
 
     @projects_index = {}
@@ -105,5 +95,28 @@ class TimeEntriesController < ApplicationController
     @time_entries = @time_entries.group_by(&:date).sort_by{|date,entries| date}
     @time_entry = TimeEntry.new
     @time_entry.person_id = @me['id']
+  end
+
+  def load_time_entry(id)
+    r = Typhoeus::Request.get("https://protein-one.basecamphq.com/time_entries/#{id}.xml", typhoeus_args)
+    if r.code == 200
+      data = XmlSimple.xml_in(r.body)
+      time_entry_from_xml(data).tap{|result| result.id = id }
+    else
+      nil
+    end
+  end
+
+  def time_entry_from_xml(xml_data)
+    TimeEntry.new.tap do |t|
+      t.date = Date.parse(xml_data['date'].first['content'])
+      t.description = xml_data['description'].first
+      t.hours = xml_data['hours'].first['content'].to_f
+      t.id = xml_data['id'].first['content'].to_i if xml_data['id']
+      t.person_id = xml_data['person-id'].first['content'].to_i
+      t.todo_item_id = xml_data['todo-item-id'].first['content'].to_i
+      t.person_name = xml_data['person-name'].first
+      t.project_id = xml_data['project-id'].first['content'].to_i if xml_data['project-id']
+    end
   end
 end

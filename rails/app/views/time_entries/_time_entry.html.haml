@@ -1,4 +1,5 @@
-= content_tag_for(:tr, time_entry, :data => {'time-entry-id' => time_entry.id}) do
+- data = {'project-id' => time_entry.project_id, 'todo-item-id' => time_entry.todo_item_id}
+= content_tag_for(:tr, time_entry, :data => data) do
   %td.date
     %a(href="#")= time_entry.date
   %td.person
@@ -6,22 +7,23 @@
   %td.project{:data => {'project-id' => time_entry.project_id}}
     %a(href="#")= projects_index[time_entry.project_id]['name']
   %td.job_code
-    = link_to content_tag(:span, '', :class => :loading), '#', :data => {'todo-item-url' => project_todo_item_path(time_entry.project_id, time_entry.todo_item_id)}
+    = link_to content_tag(:span, '', :class => :loading), '#', :data => data
   %td.hours
     %a(href="#")= time_entry.hours
   %td.notes
     %a(href="#")= time_entry.description
   %td.actions
     = link_to 'Edit', edit_time_entry_path(time_entry), :class => 'edit_time_entry_link', :data => {'time-entry-id' => time_entry.id}
-    = link_to 'Delete', time_entry_path(time_entry), :confirm => 'Sure?', :method => :delete, :remote => true, :class => :delete_time_entry, :data => {'time-entry-id' => time_entry.id}
+    = link_to 'Delete', time_entry_path(time_entry), :method => :delete, :remote => true, :class => :delete_time_entry, :data => {'time-entry-id' => time_entry.id, :confirm => 'Sure?'}
     %span.loading(style="display:none")
+
 = content_tag_for(:tr, time_entry, 'edit', :style => 'display:none', :data => {'time-entry-id' => time_entry.id}) do
   %td(colspan="7")
     = form_for(time_entry, :url => time_entry_path(time_entry), :method => :put, :namespace => "time_entry_#{time_entry.id}", :remote => true) do |f|
       %span.field.date= f.text_field :date, :placeholder => 'Date'
       %span.field.person_id= f.select :person_id, options_for_select(people.map{|person| [person['name'], person['id']]}, :selected => time_entry.person_id)
       %span.field.project_name= f.select :project_id, options_for_select(projects.map{|project| [project['name'], project['id']] }, :selected => time_entry.project_id)
-      %span.field.job_code= f.text_field :job_code, :placeholder => 'Job', :data => {'todo-item-url' => project_todo_item_path(time_entry.project_id, time_entry.todo_item_id)}
+      %span.field.job_code= f.text_field :job_code, :placeholder => 'Job', :data => data
       %span.field.hours= f.text_field :hours, :placeholder => 'Hours'
       %span.field.description= f.text_field :description, :placeholder => 'Description'
       %span.actions= f.submit 'Save', :class => 'btn'

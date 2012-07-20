@@ -77,3 +77,7 @@
             = f.text_field :description, :placeholder => 'Description'
             = f.submit 'Create', :class => 'btn btn-primary'
   %footer
+
+:javascript
+  Timesheet.projectsIndex = #{@projects_index.to_json};
+  Timesheet.peopleIndex = #{@people_index.to_json};

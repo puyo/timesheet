@@ -1,8 +1,6 @@
-- if @time_entry.valid?
+- if @time_entry
   :plain
-    $item = $('tr#time_entry_' + #{@time_entry.id});
-    $item.find('.loading').hide();
+    alert("created!")
 - else
   :plain
-    $item = $('tr#time_entry_' + #{@time_entry.id});
-    $item.css('background-color', 'red');
+    alert("error!")

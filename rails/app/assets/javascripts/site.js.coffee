@@ -11,10 +11,57 @@
 #= require "bootstrap/bootstrap-tab"
 #= require "bootstrap/bootstrap-typeahead"
 #= require "jquery-ui-1.8.21.custom.min"
+#= require "unique"
 
 ## require "underscore"
 ## require "backbone"
 ## require "time_entries"
+
+class Timesheet
+  @jobCodeIndex: {}
+  @projectsIndex: {}
+  @peopleIndex: {}
+
+  @addJobCode: (projectId, todoItemId, jobCode) ->
+    @jobCodeIndex[projectId + '-' + todoItemId] = jobCode
+    @updateEntriesWithJobCode(projectId, todoItemId, jobCode)
+
+  @loadJobCodes: ->
+    tuples = $.map $('[data-todo-item-id][data-project-id]'), (el) ->
+      $el = $(el)
+      $el.data('project-id') + '-' + $el.data('todo-item-id')
+    tuples = $.unique(tuples)
+    $.each tuples, (i, tuple) =>
+      vals = tuple.split('-')
+      projectId = vals[0]
+      todoItemId = vals[1]
+      @loadJobCode(projectId, todoItemId)
+
+  @loadJobCode: (projectId, todoItemId) ->
+    url = '/projects/' + projectId + '/todo_items/' + todoItemId + '.json'
+    $.ajax(
+      url: url
+    ).done (data) =>
+      jobCode = data.todo_item.content
+      @addJobCode(projectId, todoItemId, jobCode)
+
+  @updateEntriesWithJobCode: (projectId, todoItemId, jobCode) ->
+    selector = '[data-todo-item-id="' + todoItemId + '"][data-project-id="' + projectId + '"]'
+    $('.job_code a' + selector).text(jobCode)
+    $('input' + selector).val(jobCode)
+
+  @entryAdded: (id) ->
+    $el = $('#time_entry_' + id)
+    projectId = $el.data('project-id')
+    todoItemId = $el.data('todo-item-id')
+    key = projectId + '-' + todoItemId
+    jobCode = @jobCodeIndex[key]
+    if jobCode
+      @updateEntriesWithJobCode(projectId, todoItemId, jobCode)
+    else
+      @loadJobCode(projectId, todoItemId)
+
+window.Timesheet = Timesheet
 
 $ ->
   $('#sign_out').click ->
@@ -25,78 +72,103 @@ $ ->
     $('.sign-in').hide()
     $('.timesheet').show()
 
-  todoItemUrls = $.map($('[data-todo-item-url]'), (val, i) ->
-    $(val).data('todo-item-url')
-  )
-  todoItemUrls = $.unique(todoItemUrls)
-  $.each(todoItemUrls, (i, url) ->
-    $.ajax(
-      url: url
-    ).done (data) ->
-      name = data.todo_item.content
-      $('.job_code a[data-todo-item-url="' + url + '"]').text(name)
-      $('input[data-todo-item-url="' + url + '"]').val(name)
-  )
+  Timesheet.loadJobCodes()
 
-  show_time_entry_edit = (id) ->
-    time_entry_edit(id).show()
-    time_entry_view(id).hide()
+  showTimeEntryEdit = (id) ->
+    timeEntryEdit(id).show()
+    timeEntryView(id).hide()
 
-  hide_time_entry_edit = (id) ->
-    time_entry_edit(id).show()
-    time_entry_view(id).hide()
-    $view = time_entry_view(id)
-    $edit = time_entry_edit(id)
+  hideTimeEntryEdit = (id) ->
+    timeEntryEdit(id).show()
+    timeEntryView(id).hide()
+    $view = timeEntryView(id)
+    $edit = timeEntryEdit(id)
     $view.find('.loading').show()
     $view.show()
     $edit.hide()
 
-  time_entry_view = (id) ->
+  timeEntryView = (id) ->
     $('tr.time_entry[data-time-entry-id=' + id + ']')
 
-  time_entry_edit = (id) ->
+  timeEntryEdit = (id) ->
     $('tr.edit_time_entry[data-time-entry-id=' + id + ']')
 
-  populate_view_from_edit = (id) ->
-    $view = time_entry_view(id)
-    $edit = time_entry_edit(id)
+  populateViewFromEdit = (id) ->
+    $view = timeEntryView(id)
+    $edit = timeEntryEdit(id)
     $view.find('.date a').text($edit.find('.field.date input').val())
     $view.find('.hours a').text($edit.find('.field.hours input').val())
     $view.find('.description a').text($edit.find('.field.description input').val())
 
-  setup_time_entry_edits = ->
+  setupTimeEntryEdits = ->
     $('.edit_time_entry_link').click (e) ->
       e.preventDefault()
       id = $(e.target).data('time-entry-id')
-      show_time_entry_edit(id)
+      showTimeEntryEdit(id)
 
     $('form.edit_basecamp_time_entry').submit (e) ->
       id = $(e.target).closest('tr.edit_basecamp_time_entry').data('time-entry-id')
-      hide_time_entry_edit(id)
+      hideTimeEntryEdit(id)
 
     $('form.edit_basecamp_time_entry').bind 'ajax:success', (e) ->
       $(@).find('.loading').hide()
       id = $(e.target).closest('tr.edit_basecamp_time_entry').data('time-entry-id')
-      populate_view_from_edit(id)
+      populateViewFromEdit(id)
 
     $('form.edit_basecamp_time_entry').bind 'ajax:failure', ->
       $(@).find('.loading').hide()
       id = $(e.target).closest('tr.edit_basecamp_time_entry').data('time-entry-id')
-      time_entry_view(id).text('Error')
+      timeEntryView(id).text('Error')
 
-  setup_time_entry_edits()
+  setupTimeEntryEdits()
+
+  $.datepicker.setDefaults(dateFormat: 'yy-mm-dd')
+  $('input[name="time_entry[date]"]').datepicker()
+
+  #{label: '02A - Lunch', value:'02A'},
+  #{label: '02B - Personal Time', value:'02B'},
+  #{label: '03A - Personal Time', value:'02B'},
 
   options = [
+    '01A',
+    '01B',
+    '01C',
+    '01D',
+
     '02A',
     '02B',
+
+    '03A',
+    '03B',
+    '03B-2',
+    '03C',
+    '03D',
+    '03E',
+    '03F',
+    '03G',
+    '03H',
+
+    '04A',
+    '04A-2',
     '04B',
+    '04B-2',
+    '04C',
+    '04C-2',
+    '04D',
+    '04D-2',
+    '04F',
+    '04F-2',
+    '04G',
+    '04H',
+    '04PP',
+    '04PP-2',
     '04I',
+    '04I-2',
+
+    '05A',
+    '05B',
+    '05C',
   ]
 
-  $('#time_entry_job_code').autocomplete(options)
-
-  $.datepicker.setDefaults({
-    dateFormat: 'yy-mm-dd'
-  })
-  $('input[name="time_entry[date]"]').datepicker($.datepicker.regional['au'])
+  $('#time_entry_job_code').autocomplete(source: options)
 
