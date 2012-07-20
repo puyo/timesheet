@@ -10,11 +10,22 @@ class TimeEntriesController < ApplicationController
   end
 
   def create
-    #new_req = Typhoeus::Request.get("https://protein-one.basecamphq.com/projects/#{project_id}/time_entries/new.xml", typhoeus_args.merge(:verbose => true))
-    #puts new_req.body
-    @response = basecamp(:post, "/projects/#{project_id}/time_entries.xml", :verbose => true, :body => xml)
-    # Look up the job code they entered...
-    if id = @response.headers_hash['Location'][/\d+$/]
+    todo_list_items = []
+    lists = JSON.parse(basecamp(:get, "/projects/#{project_id}/todo_lists.json", :verbose => true).body)
+    lists['records'].each do |x|
+      list_id = x['id']
+      items = JSON.parse(basecamp(:get, "/todo_lists/#{list_id}/todo_items.json", :verbose => true).body)
+      todo_list_items += items['records']
+    end
+    item = todo_list_items.select{|t| t['content'] == params[:time_entry][:job_code] }.first
+    if item
+      new_response = basecamp(:post, "/todo_items/#{item['id']}/time_entries.xml", :verbose => true, :body => xml)
+    else
+      @message = 'No job code found on that project'
+      return
+      #new_response = basecamp(:post, "/projects/#{project_id}/time_entries.xml", :verbose => true, :body => xml)
+    end
+    if id = new_response.headers_hash['Location'][/\d+$/]
       @time_entry = load_time_entry(id)
       @time_entry.project_id = project_id
     end

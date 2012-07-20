@@ -75,26 +75,30 @@ class Timesheet
     @recalculateTotals()
 
   @removeEntry: (id) ->
-    $('#time_entry_' + id).fadeOut "normal", ->
-      $(@).remove()
-    $('#edit_time_entry_' + id).remove();
+    $entry = $('#time_entry_' + id)
+    $entry.fadeOut "normal", =>
+      $entry.remove()
+      @recalculateTotals()
+    $('#edit_time_entry_' + id).remove()
 
   @recalculateTotals: ->
-    #    $('.totals').remove()
-    #    dates = $('.time_entry').map ->
-    #      $(@).data('date')
-    #    dates = $.unique(dates)
-    #    for date in dates
-    #      console.log date
-    #      hours = $('.time_entry_')
+    $('.totals').remove()
+    dates = $('.time_entry').map ->
+      $(@).data('date')
+    dates = $.unique(dates)
+    for date in dates
+      sum = 0.0
+      entries = $('.time_entry[data-date="' + date + '"]')
+      hours = entries.each ->
+        sum += Number($(@).find('.hours').text())
+      html = '<tr class="totals"><td colspan="4">' + date + '</td><td colspan="3">' + sum + '</td></tr>'
+      entries.last().after(html)
 
-#        %tr
-#          %td(colspan="4")
-#            .date
-#              = date
-#          %td(colspan="3")
-#            .hours
-#              = total_hours
+  @disableCreate: ->
+    $('#new_time_entry').find('input[type=submit]').attr('disabled', 'disabled')
+
+  @enableCreate: ->
+    $('#new_time_entry').find('input[type=submit]').attr('disabled', null)
 
 window.Timesheet = Timesheet
 
@@ -211,3 +215,5 @@ $ ->
 
   $('#time_entry_job_code').autocomplete(source: options)
 
+  $('#new_time_entry').submit ->
+    Timesheet.disableCreate()

@@ -2,6 +2,15 @@
   :plain
     var html = "#{ escape_javascript(render('time_entry', :time_entry => @time_entry)) }";
     Timesheet.addEntry(#{@time_entry.id}, html);
+    $('#time_entry_description').val('');
+    $('#time_entry_hours').val('');
+    $('#time_entry_job_code').val('');
+- elsif @message
+  :plain
+    alert("Could not create time entry: #{ escape_javascript(@message) }");
 - else
   :plain
-    alert("error!");
+    alert("Could not create time entry");
+
+:plain
+  Timesheet.enableCreate();
