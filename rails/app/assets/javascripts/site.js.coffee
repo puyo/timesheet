@@ -27,11 +27,10 @@ class Timesheet
     @updateEntriesWithJobCode(projectId, todoItemId, jobCode)
 
   @loadJobCodes: ->
-    tuples = $.map $('[data-todo-item-id][data-project-id]'), (el) ->
-      $el = $(el)
+    tuples = $('[data-todo-item-id][data-project-id]').map ->
+      $el = $(@)
       $el.data('project-id') + '-' + $el.data('todo-item-id')
-    tuples = $.unique(tuples)
-    $.each tuples, (i, tuple) =>
+    for tuple in $.unique(tuples)
       vals = tuple.split('-')
       projectId = vals[0]
       todoItemId = vals[1]
@@ -45,12 +44,22 @@ class Timesheet
       jobCode = data.todo_item.content
       @addJobCode(projectId, todoItemId, jobCode)
 
+  @loadProjectNames: ->
+    projectIds = $.unique($.map($('[data-project-id]'), (el) -> $(el).data('project-id')))
+    $.each projectIds, (i, projectId) =>
+      @updateEntriesWithProjectName(projectId, @projectsIndex[projectId].name)
+
   @updateEntriesWithJobCode: (projectId, todoItemId, jobCode) ->
     selector = '[data-todo-item-id="' + todoItemId + '"][data-project-id="' + projectId + '"]'
-    $('.job_code a' + selector).text(jobCode)
+    $('.job_code' + selector).text(jobCode)
     $('input' + selector).val(jobCode)
 
-  @entryAdded: (id) ->
+  @updateEntriesWithProjectName: (projectId, projectName) ->
+    selector = '[data-project-id="' + projectId + '"]'
+    $('.project' + selector).text(projectName)
+
+  @addEntry: (id, html) ->
+    $('.timesheet table.table').append(html)
     $el = $('#time_entry_' + id)
     projectId = $el.data('project-id')
     todoItemId = $el.data('todo-item-id')
@@ -60,10 +69,40 @@ class Timesheet
       @updateEntriesWithJobCode(projectId, todoItemId, jobCode)
     else
       @loadJobCode(projectId, todoItemId)
+    project = @projectsIndex[projectId]
+    if project
+      @updateEntriesWithProjectName(projectId, project.name)
+    @recalculateTotals()
+
+  @removeEntry: (id) ->
+    $('#time_entry_' + id).fadeOut "normal", ->
+      $(@).remove()
+    $('#edit_time_entry_' + id).remove();
+
+  @recalculateTotals: ->
+    #    $('.totals').remove()
+    #    dates = $('.time_entry').map ->
+    #      $(@).data('date')
+    #    dates = $.unique(dates)
+    #    for date in dates
+    #      console.log date
+    #      hours = $('.time_entry_')
+
+#        %tr
+#          %td(colspan="4")
+#            .date
+#              = date
+#          %td(colspan="3")
+#            .hours
+#              = total_hours
 
 window.Timesheet = Timesheet
 
 $ ->
+  Timesheet.loadJobCodes()
+  Timesheet.loadProjectNames()
+  Timesheet.recalculateTotals()
+
   $('#sign_out').click ->
     $('.sign-in').show()
     $('.timesheet').hide()
@@ -71,8 +110,6 @@ $ ->
   $('#sign_in').click ->
     $('.sign-in').hide()
     $('.timesheet').show()
-
-  Timesheet.loadJobCodes()
 
   showTimeEntryEdit = (id) ->
     timeEntryEdit(id).show()
@@ -88,10 +125,10 @@ $ ->
     $edit.hide()
 
   timeEntryView = (id) ->
-    $('tr.time_entry[data-time-entry-id=' + id + ']')
+    $('#time_entry_' + id)
 
   timeEntryEdit = (id) ->
-    $('tr.edit_time_entry[data-time-entry-id=' + id + ']')
+    $('#edit_time_entry_' + id)
 
   populateViewFromEdit = (id) ->
     $view = timeEntryView(id)
@@ -124,6 +161,8 @@ $ ->
 
   $.datepicker.setDefaults(dateFormat: 'yy-mm-dd')
   $('input[name="time_entry[date]"]').datepicker()
+  $('input.filter.date').datepicker()
+  $('input.filter.date').datepicker()
 
   #{label: '02A - Lunch', value:'02A'},
   #{label: '02B - Personal Time', value:'02B'},

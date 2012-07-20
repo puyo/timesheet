@@ -3,7 +3,6 @@
 body
   margin: 20px
 
-
 .sign-in
   .field
     display: inline-block
@@ -11,12 +10,22 @@ body
   label
     font-weight: bold
 
+#new_time_entry
+  input, select
+    margin: 0 5px 0 0
+
 .timesheet
+  .filter
+    margin: 0 5px 0 0
+
   .loading
     +background(inline-image('ajax-loader.gif'))
     display: block
     height: image-height('ajax-loader.gif')
     width: image-width('ajax-loader.gif')
+
+  td.date
+    white-space: nowrap
 
   form
     margin: 0
@@ -85,4 +94,4 @@ body
 #time_entry_job_code
   width: 30px
 #time_entry_hours
-  width: 50px
+  width: 40px

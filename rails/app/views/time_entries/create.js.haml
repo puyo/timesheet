@@ -1,6 +1,7 @@
 - if @time_entry
   :plain
-    alert("created!")
+    var html = "#{ escape_javascript(render('time_entry', :time_entry => @time_entry)) }";
+    Timesheet.addEntry(#{@time_entry.id}, html);
 - else
   :plain
-    alert("error!")
+    alert("error!");

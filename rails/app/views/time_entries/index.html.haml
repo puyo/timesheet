@@ -1,48 +1,55 @@
 = link_to 'Edit Basecamp', edit_basecamp_key_path
 
 -#%pre
-  = @todo_items.inspect
+  = @people.inspect
+  = @proejcts.inspect
   %hr
 
 .timesheet
+
+  %form(action='/' method='get')
+    %input.filter.date.from(type="text" placeholder="From" name="from" value="#{@from}")
+    %input.filter.date.to(type="text" placeholder="To" name="to" value="#{@to}")
+    = submit_tag 'Update', :name => '', :class => 'btn btn-primary'
+  
+    %form.form-inline
+      %ul.nav.nav-pills
+        -#%li#filter_date.filter.date
+          .btn-group
+            %input.filter.date.from(type="text" placeholder="From" value="#{@from}")
+            %input.filter.date.to(type="text" placeholder="To" value="#{@to}")
+
+        -#
+          %li#filter_person.filter.person.dropdown
+            %a.dropdown-toggle(data-toggle="dropdown" href="#")
+              Person
+              %span.caret
+            %ul.dropdown-menu
+              %li <a href="#">01A - Accounts General</a>
+              %li <a href="#">01B - Accounts Payable</a>
+              %li <a href="#">01C - Accounts Receivable</a>
+              - @people.each do |person|
+                %li
+                  = link_to person['name'], '#'
+          %li#filter_project.filter.project.dropdown
+            %a.dropdown-toggle(data-toggle="dropdown" href="#")
+              Project
+              %span.caret
+            %ul.dropdown-menu
+              -# @projects.each do |id, project|
+                %li
+                  = link_to project.name, '#'
+          %li#filter_job.filter.job.dropdown
+            %a.dropdown-toggle(data-toggle="dropdown" href="#")
+              Job
+              %span.caret
+            %ul.dropdown-menu
+              %li <a href="#">01A - Accounts General</a>
+              %li <a href="#">01B - Accounts Payable</a>
+              %li <a href="#">01C - Accounts Receivable</a>
+
   %table.table
     %thead
-      -#%tr
-        %th(colspan="7")
-          .filters
-            %form.form-inline
-              %ul.nav.nav-pills
-                %li#filter_date.filter.date
-                  .btn-group
-                    %input(type="text" placeholder="Date")
-                %li#filter_person.filter.person.dropdown
-                  %a.dropdown-toggle(data-toggle="dropdown" href="#")
-                    Person
-                    %span.caret
-                  %ul.dropdown-menu
-                    %li <a href="#">01A - Accounts General</a>
-                    %li <a href="#">01B - Accounts Payable</a>
-                    %li <a href="#">01C - Accounts Receivable</a>
-                    - @people.each do |id, person|
-                      %li
-                        = link_to [person.first_name, person.last_name].join(' '), '#'
-                %li#filter_project.filter.project.dropdown
-                  %a.dropdown-toggle(data-toggle="dropdown" href="#")
-                    Project
-                    %span.caret
-                  %ul.dropdown-menu
-                    - @projects.each do |id, project|
-                      %li
-                        = link_to project.name, '#'
-                %li#filter_job.filter.job.dropdown
-                  %a.dropdown-toggle(data-toggle="dropdown" href="#")
-                    Job
-                    %span.caret
-                  %ul.dropdown-menu
-                    %li <a href="#">01A - Accounts General</a>
-                    %li <a href="#">01B - Accounts Payable</a>
-                    %li <a href="#">01C - Accounts Receivable</a>
-
       %tr
         %th Date
         %th Person
@@ -53,29 +60,18 @@
         %th
 
     - @time_entries.each do |date, time_entries|
-      %tbody
-        - total_hours = time_entries.map(&:hours).sum
-        - time_entries.each do |time_entry|
-          = render 'time_entry', :time_entry => time_entry, :projects_index => @projects_index, :people => @people, :projects => @projects
-      %tbody.totals
-        %tr
-          %td(colspan="4")
-            .date
-              =date
-          %td(colspan="3")
-            .hours
-              =total_hours
-    %tbody.new_time_entry
-      %tr
-        %td(colspan="7")
-          = form_for @time_entry, :remote => true do |f|
-            = f.text_field :date, :placeholder => 'Date', :required => true
-            = f.select :person_id, options_for_select(@people.map{|person| [person['name'], person['id'].to_i]}, :selected => @me['id'])
-            = f.select :project_id, options_for_select(@projects.map{|project| [project['name'], project['id'].to_i] }, :selected => session[:project_id])
-            = f.text_field :job_code, :placeholder => 'Job', :required => true
-            = f.text_field :hours, :placeholder => 'Hours', :required => true
-            = f.text_field :description, :placeholder => 'Description'
-            = f.submit 'Create', :class => 'btn btn-primary'
+      - total_hours = time_entries.map(&:hours).sum
+      - time_entries.each do |time_entry|
+        = render 'time_entry', :time_entry => time_entry, :projects_index => @projects_index, :people => @people, :projects => @projects
+
+  = form_for @time_entry, :remote => true do |f|
+    = f.text_field :date, :placeholder => 'Date', :required => true
+    = f.select :person_id, options_for_select(@people.map{|person| [person['name'], person['id'].to_i]}, :selected => @me['id'])
+    = f.select :project_id, options_for_select(@projects.map{|project| [project['name'], project['id'].to_i] }, :selected => session[:project_id])
+    = f.text_field :job_code, :placeholder => 'Job', :required => true
+    = f.text_field :hours, :placeholder => 'Hours', :required => true
+    = f.text_field :description, :placeholder => 'Description'
+    = f.submit 'Create', :class => 'btn btn-primary'
   %footer
 
 :javascript

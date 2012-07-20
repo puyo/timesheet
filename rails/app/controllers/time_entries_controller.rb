@@ -4,6 +4,8 @@ class TimeEntriesController < ApplicationController
   caches_action :index, :expires_in => 1.hour
  
   def index
+    @from = params[:from] || 1.week.ago.to_date.to_s(:slug)
+    @to = params[:to] || Date.today.to_s(:slug)
     fetch_data_for_index
   end
 
@@ -14,7 +16,7 @@ class TimeEntriesController < ApplicationController
       :verbose => true,
       :body => xml,
     }))
-    return render :text => 'hi'
+    # Look up the job code they entered...
     if id = @response.headers_hash['Location'][/\d+$/]
       @time_entry = load_time_entry(id)
       @time_entry.project_id = project_id
@@ -60,6 +62,8 @@ class TimeEntriesController < ApplicationController
     people_request = Typhoeus::Request.new("https://protein-one.basecamphq.com/companies/#{@me['firmId']}/people.json", typhoeus_args)
     time_entries_request = Typhoeus::Request.new('https://protein-one.basecamphq.com/time_entries/report.xml', typhoeus_args.merge(:params => {
       :subject_id => @me['id'],
+      :from => @from.gsub('-', ''),
+      :to => @to.gsub('-', ''),
     }))
 
     hydra = Typhoeus::Hydra.new
@@ -117,6 +121,7 @@ class TimeEntriesController < ApplicationController
       t.todo_item_id = xml_data['todo-item-id'].first['content'].to_i
       t.person_name = xml_data['person-name'].first
       t.project_id = xml_data['project-id'].first['content'].to_i if xml_data['project-id']
+      t.persisted = true
     end
   end
 end

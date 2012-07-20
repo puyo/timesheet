@@ -1,4 +1,3 @@
 - if @id
   :plain
-    $('.time_entry[data-time-entry-id=#{@id}]').remove();
-    $('.edit_time_entry[data-time-entry-id=#{@id}]').remove();
+    Timesheet.removeEntry(#{@id});

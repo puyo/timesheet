@@ -20,15 +20,16 @@ class TimeEntry
   def self.destroy(id, basecamp_key)
   end
 
-  attr_accessor :id, :date, :person_id, :project_id, :todo_item_id, :hours, :description, :job_code, :person_name, :project_name
+  attr_accessor :id, :date, :person_id, :project_id, :todo_item_id, :hours, :description, :job_code, :person_name, :project_name, :persisted
   
   def persisted?
-    false
+    @persisted
   end
 
   def initialize(attributes = {})
     self.date = Date.today
     self.attributes = attributes
+    self.persisted = false
   end
 
   def attributes=(attributes)
@@ -51,6 +52,7 @@ class TimeEntry
       t.todo_item_id = bc_time_entry.todo_item_id
       t.description = bc_time_entry.description
       #t.job_code = bc_time_entry.job_code
+      t.persisted = true
     end
   end
 end
