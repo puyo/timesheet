@@ -95,3 +95,8 @@ $ ->
 
   $('#time_entry_job_code').autocomplete(options)
 
+  $.datepicker.setDefaults({
+    dateFormat: 'yy-mm-dd'
+  })
+  $('input[name="time_entry[date]"]').datepicker($.datepicker.regional['au'])
+
