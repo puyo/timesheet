@@ -106,19 +106,19 @@ class Timesheet
     @refreshEntry(id)
 
   @updateEntry: (id, html) ->
-    $view = $('#time_entry_' + id)
+    $view = @timeEntryView(id)
     $parent = $view.parent()
     index = $parent.children().index($view)
-    $edit = $('#edit_time_entry_' + id)
+    $edit = @timeEntryEdit(id)
     $view.remove()
     $edit.remove()
     $parent.find('tr').eq(index).before(html)
     @refreshEntry(id)
 
   @refreshEntry: (id) ->
-    $el = $('#time_entry_' + id)
-    projectId = $el.data('project-id')
-    todoItemId = $el.data('todo-item-id')
+    $view = @timeEntryView(id)
+    projectId = $view.data('project-id')
+    todoItemId = $view.data('todo-item-id')
     key = projectId + '-' + todoItemId
     jobCode = @jobCodeIndex[key]
     if jobCode
@@ -133,11 +133,11 @@ class Timesheet
     @updateEntriesWithPeople()
 
   @removeEntry: (id) ->
-    $entry = $('#time_entry_' + id)
+    $view = @timeEntryView(id)
     $entry.fadeOut "normal", =>
       $entry.remove()
       @resort()
-    $('#edit_time_entry_' + id).remove()
+    @timeEntryEdit(id).remove()
 
   @sortKey: (tr) ->
     $tr = $(tr)
@@ -151,10 +151,8 @@ class Timesheet
   @resort: ->
     $('.totals').remove()
     $entries = $('.time_entry')
-    $entries.sortElements(
-      (a, b) =>
-        @sortKey(a) > @sortKey(b) ? 1 : -1
-    )
+    $entries.sortElements (a, b) =>
+      @sortKey(a) > @sortKey(b) ? 1 : -1
     dates = $entries.map ->
       $(@).data('date')
     dates = $.unique(dates)
@@ -199,10 +197,6 @@ class Timesheet
     $view.show()
     $edit.hide()
 
-  @submitTimeEntryEdit: (id) ->
-    $view.find('.loading').show()
-    @hideTimeEntryEdit(id)
-
   @timeEntryView: (id) ->
     $('#time_entry_' + id)
 
@@ -240,6 +234,7 @@ $ ->
     $(this).autocomplete(source: Timesheet.jobCodes)
 
   $.datepicker.setDefaults(dateFormat: 'yy-mm-dd')
+
   $('input.filter.date').datepicker()
 
   $('body').on 'focus', 'input[name="time_entry[date]"]', ->
