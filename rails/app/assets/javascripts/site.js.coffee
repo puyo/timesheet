@@ -57,8 +57,8 @@ class Timesheet
     '04H',
     '04PP',
     '04PP-2',
-    '04I',
-    '04I-2',
+    '04i',
+    '04i-2',
 
     '05A',
     '05B',
@@ -139,20 +139,27 @@ class Timesheet
       @resort()
     @timeEntryEdit(id).remove()
 
-  @sortKey: (tr) ->
-    $tr = $(tr)
-    result = $tr.data('date')
-    if $tr.hasClass('edit_time_entry')
-      result += '-2'
+  @sortKey: ($el, n) ->
+    result = $el.data('date') + '_' + $el.data('time-entry-id')
+    if $el.hasClass('edit_time_entry')
+      result += '_2'
     else
-      result += '-1'
+      result += '_1'
     return result
 
   @resort: ->
     $('.totals').remove()
-    $entries = $('.time_entry')
-    $entries.sortElements (a, b) =>
-      @sortKey(a) > @sortKey(b) ? 1 : -1
+    $entries = $('tr.time_entry, tr.edit_time_entry')
+    $entries.tsort sortFunction: (a, b) =>
+      x = @sortKey(a.e, a.n)
+      y = @sortKey(b.e, b.n)
+      if x == y 
+        0
+      else if x > y
+        1
+      else
+        -1
+
     dates = $entries.map ->
       $(@).data('date')
     dates = $.unique(dates)
@@ -165,11 +172,12 @@ class Timesheet
       $('.edit_time_entry[data-date="' + date + '"]').last().after(html)
 
   @disableCreate: ->
-    # still allows hitting enter...
+    # TODO: still allows hitting enter...
     #$('#new_time_entry').find('input[type=submit]').attr('disabled', 'disabled')
 
   @enableCreate: ->
     #$('#new_time_entry').find('input[type=submit]').attr('disabled', null)
+    $('#time_entry_job_code').focus()
 
   @updateEntriesWithProjects: () ->
     for e in $('.field.project_id select[data-project-id]')
