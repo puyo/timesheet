@@ -33,7 +33,9 @@ class TimeEntriesController < ApplicationController
 
   def update
     @response = basecamp(:put, "/time_entries/#{params[:id]}.xml", :verbose => true, :body => xml)
-    @id = params[:id] if @response.code == 200
+    id = params[:id] if @response.code == 200
+    @time_entry = load_time_entry(id)
+    @time_entry.project_id = project_id
   end
 
   def destroy

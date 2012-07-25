@@ -1,8 +1,10 @@
-- if @time_entry.valid?
+- if @time_entry
   :plain
-    $item = $('tr#basecamp_time_entry_' + #{@time_entry.id});
-    $item.find('.loading').hide();
+    var html = "#{ escape_javascript(render('time_entry', :time_entry => @time_entry)) }";
+    Timesheet.updateEntry(#{@time_entry.id}, html);
+- elsif @message
+  :plain
+    alert("Could not update time entry: #{ escape_javascript(@message) }");
 - else
   :plain
-    $item = $('tr#basecamp_time_entry_' + #{@time_entry.id});
-    $item.css('background-color', 'red');
+    alert("Could not update time entry");

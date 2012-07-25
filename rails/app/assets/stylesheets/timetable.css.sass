@@ -10,10 +10,22 @@ body
   label
     font-weight: bold
 
-#new_time_entry
-  input, select
-    margin: 0 5px 0 0
+.one-line-form
+  .btn
+    margin-bottom: 9px
 
+#new_time_entry
+  @extend .one-line-form
+  padding: 0 8px
+
+form.edit_time_entry
+  @extend .one-line-form
+  position: relative
+  padding-right: 1.5em // reserve space for close button
+  .close
+    position: absolute
+    top: 0
+    right: 0
 
 .timesheet
   padding: 20px 0
@@ -30,8 +42,6 @@ body
   td.date
     white-space: nowrap
 
-  form
-    margin: 0
   thead
     th
       +pie-clearfix
@@ -90,11 +100,15 @@ body
 .hidden
   display: none
 
-#time_entry_date
+input[name='time_entry[date]']
   width: 80px
-#time_entry_person_id
+select[name='time_entry[person_id]']
   width: 150px
-#time_entry_job_code
+select[name='time_entry[project_id]']
+  width: 220px
+input[name='time_entry[job_code]']
   width: 30px
-#time_entry_hours
+input[name='time_entry[hours]']
   width: 40px
+input[name='time_entry[description]']
+  width: 220px

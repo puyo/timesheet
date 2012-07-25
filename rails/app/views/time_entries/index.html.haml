@@ -76,5 +76,7 @@
   %footer
 
 :javascript
+  Timesheet.projects = #{@projects.to_json};
+  Timesheet.people = #{@people.to_json};
   Timesheet.projectsIndex = #{@projects_index.to_json};
   Timesheet.peopleIndex = #{@people_index.to_json};
