@@ -1,8 +1,4 @@
 class TimeEntriesController < ApplicationController
-  #before_filter :basecamp_auth!
-
-  caches_action :index, :expires_in => 1.hour
- 
   def index
     @from = params[:from] || 1.week.ago.to_date.to_s(:slug)
     @to = params[:to] || Date.today.to_s(:slug)
