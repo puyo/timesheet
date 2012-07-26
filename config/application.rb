@@ -64,8 +64,8 @@ module Timesheet
 
     config.generators.template_engine = :haml
     config.generators.stylesheet_engine = :sass
-    if defined?(Sass)
-      config.sass.preferred_syntax = :sass
-    end
+    #if defined?(Sass)
+      #config.sass.preferred_syntax = :sass
+    #end
   end
 end
