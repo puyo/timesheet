@@ -130,11 +130,4 @@ class TimeEntriesController < ApplicationController
     end
   end
 
-  def basecamp(method, path, args = {})
-    Typhoeus::Request.send(method, [basecamp_host, path].join, typhoeus_args.merge(args))
-  end
-
-  def basecamp_host
-    "https://protein-one.basecamphq.com"
-  end
 end

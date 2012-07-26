@@ -16,6 +16,27 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  class BasecampError < RuntimeError
+  end
+
+  rescue_from BasecampError, :with => :basecamp_error
+
+  def basecamp_error
+    redirect_to edit_basecamp_key_url
+  end
+
+  def basecamp(method, path, args = {})
+    result = Typhoeus::Request.send(method, [basecamp_host, path].join, typhoeus_args.merge(args))
+    if method.to_s == 'get' and result.code == 401
+      raise BasecampError, result.body
+    end
+    result
+  end
+
+  def basecamp_host
+    "https://protein-one.basecamphq.com"
+  end
+
   def typhoeus_args
     {
       :method => 'get',
