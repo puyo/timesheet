@@ -1,4 +1,5 @@
 require 'capistrano_colors'
+require 'bundler/capistrano'
 
 default_run_options[:pty] = true
 
@@ -10,6 +11,7 @@ set :user, 'ci'
 set :deploy_via, :copy
 set :use_sudo, :false
 set :run_method, :run
+set :bundle_flags, '--deployment'
 
 server 'dev.protein', :app, :web, :db, :primary => true
 
