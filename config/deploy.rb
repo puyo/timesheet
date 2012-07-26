@@ -12,6 +12,7 @@ set :deploy_via, :copy
 set :use_sudo, :false
 set :run_method, :run
 set :bundle_flags, '--deployment'
+set :bundle_cmd, '/Users/ci/.rvm/gems/ree-1.8.7-2012.02@global/bin/bundle'
 
 server 'dev.protein', :app, :web, :db, :primary => true
 
@@ -29,3 +30,4 @@ namespace :deploy do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
   end
 end
+
