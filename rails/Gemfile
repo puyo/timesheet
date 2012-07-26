@@ -19,11 +19,12 @@ group :assets do
 end
 
 group :development, :test do
-  gem 'debugger', :require => nil
+  gem 'ruby-debug', :require => nil
 end
 
 group :development do
   gem 'capistrano'
+  gem 'capistrano_colors'
   gem 'guard-rspec'
   gem 'guard-livereload'
   gem 'rb-fsevent'
