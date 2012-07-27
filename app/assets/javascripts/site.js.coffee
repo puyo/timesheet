@@ -90,7 +90,9 @@ class Timesheet
   @loadProjectNames: ->
     projectIds = $.unique($.map($('[data-project-id]'), (el) -> $(el).data('project-id')))
     for projectId in projectIds
-      @updateEntriesWithProjectName(projectId, @projectsIndex[projectId].name)
+      project = @projectsIndex[projectId]
+      if project
+        @updateEntriesWithProjectName(projectId, project.name)
 
   @updateEntriesWithJobCode: (projectId, todoItemId, jobCode) ->
     selector = '[data-todo-item-id="' + todoItemId + '"][data-project-id="' + projectId + '"]'

@@ -58,25 +58,21 @@ class TimeEntriesController < ApplicationController
 
   def fetch_data_for_index
     @me = basecamp_get_json('/me.json')
-    projects_request = basecamp_get_json_async('/projects.json') do |json|
-      @all_projects = json['records']
+    basecamp_get_json_paginated('/projects.json') do |results|
+      @all_projects = results
       @projects = @all_projects.select{|project| project['status'] == 'active' }
     end
-    people_request = basecamp_get_json_async("/companies/#{@me['firmId']}/people.json") do |json|
+    basecamp_get_json_async("/companies/#{@me['firmId']}/people.json") do |json|
       @people = json['records']
     end
-    time_entries_request = basecamp_get_xml_async('/time_entries/report.xml', :params => {
+    basecamp_get_xml_async('/time_entries/report.xml', :params => {
       :subject_id => @me['id'],
       :from => @from.gsub('-', ''),
       :to => @to.gsub('-', ''),
     }) do |xml|
       @time_entries = (xml['time-entry'] || []).map{|el| time_entry_from_xml(el) }
     end
-    hydra = Typhoeus::Hydra.new
-    hydra.queue projects_request
-    hydra.queue people_request
-    hydra.queue time_entries_request 
-    hydra.run
+    basecamp_run_async
     @projects_index = {}
     @all_projects.each do |project|
       @projects_index[project['id'].to_i] = project
@@ -85,7 +81,6 @@ class TimeEntriesController < ApplicationController
     @people.each do |person|
       @people_index[person['id'].to_i] = person
     end
-    @time_entries.each{|entry| entry.project_name = @projects_index[entry.project_id] }
     @time_entries = @time_entries.group_by(&:date)
   end
 
