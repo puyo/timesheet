@@ -59,7 +59,8 @@ class TimeEntriesController < ApplicationController
   def fetch_data_for_index
     @me = basecamp_get_json('/me.json')
     projects_request = basecamp_get_json_async('/projects.json') do |json|
-      @projects = json['records']
+      @all_projects = json['records']
+      @projects = @all_projects.select{|project| project['status'] == 'active' }
     end
     people_request = basecamp_get_json_async("/companies/#{@me['firmId']}/people.json") do |json|
       @people = json['records']
@@ -77,13 +78,14 @@ class TimeEntriesController < ApplicationController
     hydra.queue time_entries_request 
     hydra.run
     @projects_index = {}
-    @projects.each do |project|
+    @all_projects.each do |project|
       @projects_index[project['id'].to_i] = project
     end
     @people_index = {}
     @people.each do |person|
       @people_index[person['id'].to_i] = person
     end
+    @time_entries.each{|entry| entry.project_name = @projects_index[entry.project_id] }
     @time_entries = @time_entries.group_by(&:date)
   end
 
