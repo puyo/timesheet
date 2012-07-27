@@ -166,11 +166,14 @@ class Timesheet
       $(@).data('date')
     dates = $.unique(dates)
     for date in dates
+      dateObj = new Date(date)
+      formattedDate = date #$.datepicker.formatDate('yy-mm-dd&nbsp;&nbsp;&nbsp;DD', dateObj)
+      day = $.datepicker.formatDate('DD', dateObj)
       entries = $('.time_entry[data-date="' + date + '"]')
       sum = 0.0
       for entry in entries
         sum += Number($(entry).find('.hours').text())
-      html = '<tr class="totals"><td colspan="4">' + date + '</td><td colspan="3">' + sum + '</td></tr>'
+      html = '<tr class="totals"><td colspan="1">' + formattedDate + '</td><td colspan="3"> ' + day + '</td><td colspan="3">' + sum + '</td></tr>'
       $('.edit_time_entry[data-date="' + date + '"]').last().after(html)
 
   @disableCreate: ->

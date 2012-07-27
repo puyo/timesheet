@@ -3,6 +3,9 @@
 body
   margin: 20px
 
+.basecamp_key_link
+  float: right
+
 .sign-in
   .field
     display: inline-block
@@ -39,7 +42,7 @@ form.edit_time_entry
     height: image-height('ajax-loader.gif')
     width: image-width('ajax-loader.gif')
 
-  td.date
+  .date, .job_code, .totals
     white-space: nowrap
 
   thead
@@ -93,8 +96,9 @@ form.edit_time_entry
     background-color: #eee
   .totals
     td
-      font-weight: bold
       background-color: #eee
+      font-weight: bold
+      position: relative
 
 .hidden
   display: none
