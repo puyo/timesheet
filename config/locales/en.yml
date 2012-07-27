@@ -2,4 +2,13 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  activemodel:
+    attributes:
+      basecamp_key:
+        basecamp_api_token: "Basecamp API Token"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: "is required"
