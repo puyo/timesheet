@@ -69,8 +69,7 @@ class TimeEntriesController < ApplicationController
       :from => @from.gsub('-', ''),
       :to => @to.gsub('-', ''),
     }) do |xml|
-      # TODO: NoMethodError (undefined method `map' for nil:NilClass):
-      @time_entries = xml['time-entry'].map{|el| time_entry_from_xml(el) }
+      @time_entries = (xml['time-entry'] || []).map{|el| time_entry_from_xml(el) }
     end
     hydra = Typhoeus::Hydra.new
     hydra.queue projects_request
