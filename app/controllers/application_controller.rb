@@ -21,7 +21,8 @@ class ApplicationController < ActionController::Base
 
   rescue_from BasecampError, :with => :basecamp_error
 
-  def basecamp_error
+  def basecamp_error(error)
+    logger.debug{ "Basecamp API error: #{error.message}" }
     redirect_to edit_basecamp_key_url
   end
 
@@ -48,7 +49,7 @@ class ApplicationController < ActionController::Base
   def basecamp_get_json_async(path, args = {}, &block)
     req = basecamp(:new, path, args)
     req.on_complete do |result|
-      if result.success?
+      if result.code == 200
         block.call JSON.parse(result.body)
       else
         raise BasecampError, result.body
@@ -95,10 +96,10 @@ class ApplicationController < ActionController::Base
     obj = Typhoeus::Request.send(method, [basecamp_host, path].join, typhoeus_args.merge(args))
     if obj.is_a?(Typhoeus::Request)
       obj
-    elsif obj.code == 200
+    elsif obj.code == 200 or obj.code == 201
       obj
     else
-      raise BasecampError, obj.body
+      raise BasecampError, obj.code
     end
   end
 end

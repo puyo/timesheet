@@ -134,8 +134,8 @@ class Timesheet
 
   @removeEntry: (id) ->
     $view = @timeEntryView(id)
-    $entry.fadeOut "normal", =>
-      $entry.remove()
+    $view.fadeOut "normal", =>
+      $view.remove()
       @resort()
     @timeEntryEdit(id).remove()
 
