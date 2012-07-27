@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   def basecamp_get_json_async(path, args = {}, &block)
     req = basecamp(:new, path, args)
     req.on_complete do |result|
-      logger.info{ result.body }
+      #logger.info{ result.body }
       if result.code == 200 or result.code == 201
         block.call JSON.parse(result.body)
       else
@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
   def basecamp_get_xml_async(path, args = {}, &block)
     req = basecamp(:new, path, args)
     req.on_complete do |result|
-      logger.info{ result.body }
+      #logger.info{ result.body }
       if result.code == 200 or result.code == 201
         block.call XmlSimple.xml_in(result.body)
       else
