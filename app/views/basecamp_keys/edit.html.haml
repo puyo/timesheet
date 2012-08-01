@@ -1,3 +1,14 @@
+%h1 Basecamp Setup
+
+%p To use this application, you need to set it up to access Basecamp on your behalf.
+
+.instructions
+  %ol
+    %li Visit Basecamp Classic
+    %li Click on "My info" in the top right corner
+    %li Click "Show your tokens"
+    %li Enter the value of "Token for feed readers or the Basecamp API"
+
 = form_for(@basecamp_key, :url => basecamp_key_path, :method => :put) do |f|
   - if @basecamp_key.errors.any?
     #error_explanation
@@ -7,16 +18,8 @@
       %ul
         - @basecamp_key.errors.full_messages.each do |msg|
           %li= msg
-  .field
-    = f.label :basecamp_api_token
-    = f.text_field :basecamp_api_token
+  = f.label :basecamp_api_token
+  = f.text_field :basecamp_api_token
   .actions
     = f.submit 'Update'
 
-.instructions
-  %h2 Instructions
-  %ol
-    %li Visit Basecamp Classic
-    %li Click on "My info" in the top right corner
-    %li Click "Show your tokens"
-    %li Enter the value of "Token for feed readers or the Basecamp API" into the box above
