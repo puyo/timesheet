@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   rescue_from BasecampError, :with => :basecamp_error
 
   def basecamp_error(error)
-    logger.debug{ "Basecamp API error: #{error.message}" }
+    logger.error{ "Basecamp API error: #{error.message}" }
     redirect_to edit_basecamp_key_url
   end
 
