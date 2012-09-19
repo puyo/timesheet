@@ -70,7 +70,7 @@
   = form_for @time_entry, :remote => true do |f|
     = f.text_field :date, :placeholder => 'Date', :required => true
     = f.select :person_id, options_for_select(@people.map{|person| [person['name'], person['id'].to_i]}, :selected => @me['id'])
-    = f.select :project_id, options_for_select(@projects.map{|project| [project['name'], project['id'].to_i] }, :selected => session[:project_id])
+    = f.select :project_id, options_for_select(@projects.map{|project| [project['name'], project['id'].to_i] }, :selected => session[:project_id] || '1776419')
     = f.text_field :job_code, :placeholder => 'Job', :required => true
     = f.text_field :hours, :placeholder => 'Hours', :required => true
     = f.text_field :description, :placeholder => 'Description'

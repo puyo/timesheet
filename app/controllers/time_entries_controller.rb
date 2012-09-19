@@ -25,12 +25,14 @@ class TimeEntriesController < ApplicationController
       @time_entry = load_time_entry(id)
       @time_entry.project_id = project_id
     end
+    session[:project_id] = project_id
   end
 
   def update
     result = basecamp_put("/time_entries/#{params[:id]}.xml", :body => xml)
     @time_entry = load_time_entry(params[:id])
     @time_entry.project_id = project_id
+    session[:project_id] = project_id
   end
 
   def destroy
