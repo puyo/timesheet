@@ -7,6 +7,7 @@ gem 'compass-rails'
 gem 'compass_twitter_bootstrap'
 gem 'haml-rails'
 gem 'jquery-rails'
+gem 'mysql2'
 gem 'typhoeus'
 
 # Gems used only for assets and not required

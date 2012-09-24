@@ -244,7 +244,7 @@ $ ->
 
   $.datepicker.setDefaults(dateFormat: 'yy-mm-dd')
 
-  $('input.filter.date').datepicker()
+  $('input.date').datepicker()
 
   $('body').on 'focus', 'input[name="time_entry[date]"]', ->
     $(this).datepicker().datepicker('show')
@@ -252,3 +252,6 @@ $ ->
 
   $('#new_time_entry').submit ->
     Timesheet.disableCreate()
+
+  $('#project_basecamp_project_id').change ->
+    $('#project_basecamp_project_name').val($(this).find('option:selected').text())

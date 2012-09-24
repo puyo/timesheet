@@ -1,7 +1,7 @@
-%h1 Editing project
+%ul.breadcrumb
+  %li
+    = link_to 'Projects', projects_path
+    %span.divider /
+  %li.active Edit Project
 
 = render 'form'
-
-= link_to 'Show', @project
-\|
-= link_to 'Back', projects_path

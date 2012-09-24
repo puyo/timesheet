@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,5 +10,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120522010724) do
+ActiveRecord::Schema.define(:version => 20120920040209) do
+
+  create_table "basecamp_projects", :force => true do |t|
+    t.text     "data"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "projects", :force => true do |t|
+    t.integer  "basecamp_project_id",                  :null => false
+    t.string   "basecamp_project_name",                :null => false
+    t.integer  "hours_budgeted",        :default => 0, :null => false
+    t.integer  "hours_spent",           :default => 0, :null => false
+    t.datetime "due_date"
+    t.datetime "last_refreshed"
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+  end
+
 end

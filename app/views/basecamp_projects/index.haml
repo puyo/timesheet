@@ -1,0 +1,10 @@
+%ul.breadcrumb
+  %li
+    = link_to 'Projects', projects_path
+    %span.divider /
+  %li.active Refresh from Basecamp
+
+= button_to 'Refresh', refresh_basecamp_projects_path
+- @basecamp_projects.each do |p|
+  %div= p.data['name']
+

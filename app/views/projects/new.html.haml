@@ -1,5 +1,7 @@
-%h1 New project
+%ul.breadcrumb
+  %li
+    = link_to 'Projects', projects_path
+    %span.divider /
+  %li.active Add Project
 
 = render 'form'
-
-= link_to 'Back', projects_path

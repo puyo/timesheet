@@ -1,17 +1,34 @@
-%h1 Listing projects
+%ul.breadcrumb
+  %li.active Projects
 
-%table
-  %tr
-    %th
-    %th
-    %th
+%table.table.projects-table
+  %thead
+    %th Name
+    %th Time to Due Date
+    %th Progress
+  %tbody
+    - @projects.each do |project|
+      = content_tag_for(:tr, project) do
+        %td.name
+          = link_to edit_project_path(project) do
+            = project.basecamp_project_name
+        %td.due_date
+          - if project.due_date.present?
+            -#Due
+              = project.due_date.to_date.to_s(:long_ordinal)
+              (
+              )
+            = distance_of_time_in_words_to_now(project.due_date, :include_seconds => false).capitalize
+        %td.progress_meter
+          - if project.hours_budgeted > 0
+            .progress{:class => "progress-#{project.status}"}
+              .bar{:style => "width: #{project.percent_spent}%"}
+            .hours
+              = project.hours_spent
+              of
+              = project.hours_budgeted
+              hours
 
-  - @projects.each do |project|
-    %tr
-      %td= link_to 'Show', project
-      %td= link_to 'Edit', edit_project_path(project)
-      %td= link_to 'Destroy', project, :confirm => 'Are you sure?', :method => :delete
-
-%br
-
-= link_to 'New Project', new_project_path
+%hr
+= link_to 'Add Project', new_project_path, :class => 'btn btn-success'
+= button_to 'Measure Progress', measure_projects_path, :class => 'btn'

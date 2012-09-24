@@ -1,10 +1,33 @@
-= form_for @project do |f|
-  -if @project.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@project.errors.count, "error")} prohibited this project from being saved:"
-      %ul
-        - @project.errors.full_messages.each do |msg|
-          %li= msg
+-if @project.errors.any?
+  #error_explanation
+    %p
+      %strong= "#{pluralize(@project.errors.count, "error")} prohibited this project from being saved:"
+    %ul
+      - @project.errors.full_messages.each do |msg|
+        %li= msg
 
-  .actions
-    = f.submit 'Save'
+.project-form
+  .refresh-button
+    = button_to 'Refresh available projects from Basecamp', refresh_basecamp_projects_path, :class => 'btn'
+
+  = form_for @project, :html => { :class => 'form-horizontal'} do |f|
+
+    .control-group
+      = f.label :basecamp_project_id, :class => 'control-label'
+      .controls
+        = f.select :basecamp_project_id, options_for_select(@basecamp_projects.map{|project| [project.data['name'], project.data['id'].to_i] }, :selected => @project.basecamp_project_id)
+        = f.hidden_field :basecamp_project_name
+    .control-group
+      = f.label :hours_budgeted, :class => 'control-label'
+      .controls
+        = f.number_field :hours_budgeted
+    .control-group
+      = f.label :due_date, :class => 'control-label'
+      .controls
+        = f.text_field :due_date, :placeholder => "Due Date", :class => 'date'
+      
+    .control-group
+      .controls
+        = f.submit :class => 'btn btn-primary'
+        - if params[:action] == 'edit'
+          = link_to 'Delete project', @project, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'

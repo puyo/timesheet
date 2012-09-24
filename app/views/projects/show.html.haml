@@ -1,5 +1,14 @@
 %p#notice= notice
 
+%p
+  %b Basecamp project:
+  = @project.basecamp_project_id
+%p
+  %b Hours Budgeted:
+  = @project.hours_budgeted
+%p
+  %b Due date:
+  = @project.due_date
 
 = link_to 'Edit', edit_project_path(@project)
 \|
