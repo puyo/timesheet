@@ -86,7 +86,6 @@ class ProjectsController < ApplicationController
       projects.each do |project|
         entries = results[project.id]
         times = entries.map{|e| e['hours'].first['content'].to_f }
-        pp times
         project.hours_spent = times.sum
         project.save!
       end
