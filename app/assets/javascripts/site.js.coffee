@@ -10,7 +10,7 @@
 #= require "bootstrap/bootstrap-scrollspy"
 #= require "bootstrap/bootstrap-tab"
 #= require "bootstrap/bootstrap-typeahead"
-#= require "jquery-ui-1.8.21.custom.min"
+#= require "jquery-ui-1.8.23.custom.min"
 #= require "unique"
 #= require "sort-elements"
 
@@ -80,8 +80,11 @@ class Timesheet
     $.ajax(
       url: url
     ).done (data) =>
-      jobCode = data.todo_item.content
-      @addJobCode(projectId, todoItemId, jobCode)
+      if data
+        jobCode = data.todo_item.content
+        @addJobCode(projectId, todoItemId, jobCode)
+      else
+        @updateEntriesWithJobCode(projectId, todoItemId, '')
 
   @loadProjectNames: ->
     projectIds = $.unique($.map($('[data-project-id]'), (el) -> $(el).data('project-id')))
@@ -255,3 +258,11 @@ $ ->
 
   $('#project_basecamp_project_id').change ->
     $('#project_basecamp_project_name').val($(this).find('option:selected').text())
+
+  $(document).ajaxComplete (event, request) ->
+    flash = $.parseJSON(request.getResponseHeader("X-Flash-Messages"))
+    if !flash
+      return
+    for flashType, className in [['notice', 'success'], ['alert', 'error'], ['info', 'info']]
+      if flash[flashType]
+        $('#flash').html('<div class="alert alert-' + className + '">' + flash[flashType] + '</div>')

@@ -1,4 +1,10 @@
-%h1 Basecamp Setup
+- content_for :breadcrumb do
+  %ul.breadcrumb
+    %li
+      = link_to 'Home', root_path
+      %span.divider /
+    %li.active Basecamp Setup
+
 
 %p To use this application, you need to set it up to access Basecamp on your behalf.
 

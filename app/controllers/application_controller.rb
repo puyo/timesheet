@@ -22,8 +22,14 @@ class ApplicationController < ActionController::Base
   rescue_from BasecampError, :with => :basecamp_error
 
   def basecamp_error(error)
-    logger.error{ "Basecamp API error: #{error.message}" }
-    redirect_to edit_basecamp_key_url
+    logger.error{ "Basecamp API error: #{error.message.inspect}" }
+    alert = "Error communicating with Basecamp: #{error.message.inspect}"
+    if request.xhr?
+      # let the current page print the error message
+      flash[:alert] = alert
+    else
+      redirect_to edit_basecamp_key_url, :alert => alert
+    end
   end
 
   def basecamp_get_json(path, args = {})
@@ -132,7 +138,25 @@ class ApplicationController < ActionController::Base
     elsif obj.code == 200 or obj.code == 201
       obj
     else
-      raise BasecampError, obj.code
+      #logger.debug{ [obj.headers_hash, obj.code, obj.body].inspect }
+      if obj.respond_to?(:body) and obj.body.present?
+        raise BasecampError, obj.body.strip
+      elsif obj.respond_to?(:status) and obj.status.present?
+        raise BasecampError, obj.status.strip
+      else
+        raise BasecampError, obj.code
+      end
+    end
+  end
+
+  after_filter :flash_to_headers
+
+  def flash_to_headers
+    if request.xhr?
+      #avoiding XSS injections via flash
+      flash_json = Hash[flash.map{|k,v| [k,ERB::Util.h(v)] }].to_json
+      response.headers['X-Flash-Messages'] = flash_json
+      flash.discard
     end
   end
 end

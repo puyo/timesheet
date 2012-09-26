@@ -1,5 +1,6 @@
-%ul.breadcrumb
-  %li.active Projects
+- content_for :breadcrumb do
+  %ul.breadcrumb
+    %li.active Projects
 
 %table.table.projects-table
   %thead
@@ -30,5 +31,5 @@
               hours
 
 %hr
-= link_to 'Add Project', new_project_path, :class => 'btn btn-success'
+= link_to 'Start Tracking a Project', new_project_path, :class => 'btn btn-success'
 = button_to 'Measure Progress', measure_projects_path, :class => 'btn'

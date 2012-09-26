@@ -1,5 +1,7 @@
 @import compass_twitter_bootstrap
 
+// $inner-width: auto
+
 body
   margin: 20px
 
@@ -10,7 +12,32 @@ body
     @extend .btn-primary
 
 .basecamp_key_link
-  float: right
+  position: absolute
+  right: 20px
+  text-align: center
+  top: -30px
+  padding-bottom: 30px
+  +transition(all 0.2s)
+  a
+    +transition(all 0.2s)
+    +border-bottom-left-radius
+    +border-bottom-right-radius
+    +box-shadow
+    height: 40px
+    width: 180px
+    background-color: rgba(0, 0, 0, 0.25)
+    border-color: rgba(255, 255, 255, 0.25)
+    border-style: solid
+    border-width: 0 3px 3px 3px
+    color: white
+    line-height: 40px
+    padding: 10px
+    text-align: center
+    text-decoration: none
+  &:hover
+    top: -3px
+    a
+      background-color: rgba(0, 0, 0, 0.75)
 
 .sign-in
   .field
@@ -37,7 +64,7 @@ form.edit_time_entry
     right: 0
 
 .timesheet
-  padding: 20px 0
+  margin: 20px 0
 
   .filter
     margin: 0 5px 0 0
@@ -122,8 +149,8 @@ input[name='time_entry[hours]']
 input[name='time_entry[description]']
   width: 220px
 
-.breadcrumb
-  width: 700px
+#inner
+  //max-width: $inner-width
 
 .progress_meter
   width: 300px
@@ -147,3 +174,6 @@ input[name='time_entry[description]']
 form.button_to
   &, > div
     display: inline
+
+.alert
+  margin: 20px 0

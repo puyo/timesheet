@@ -13,7 +13,25 @@
   <%= link_to 'Set Basecamp API Key', edit_basecamp_key_path %>
 </div>
 
-<%= yield %>
+<div id="inner">
+
+  <%= yield(:breadcrumb) %>
+
+  <div id="flash">
+    <% [[:notice, 'success'], [:alert, 'error'], [:info, 'info']].each do |flash_type, twitter_bootstrap_class| %>
+      <% if flash[flash_type].present? %>
+        <div id="flash-notice" class="alert alert-<%= twitter_bootstrap_class %>">
+          <a href="#" class="close" data-dismiss="alert">×</a>
+          <% for message in flash[flash_type] %>
+            <div class="flash-message"><%= message %></div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= yield %>
+</div>
 
 </body>
 </html>

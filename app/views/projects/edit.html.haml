@@ -1,7 +1,8 @@
-%ul.breadcrumb
-  %li
-    = link_to 'Projects', projects_path
-    %span.divider /
-  %li.active Edit Project
+- content_for :breadcrumb do
+  %ul.breadcrumb
+    %li
+      = link_to 'Projects', projects_path
+      %span.divider /
+    %li.active Edit Project
 
 = render 'form'

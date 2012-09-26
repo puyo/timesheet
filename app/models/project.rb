@@ -31,9 +31,17 @@ class Project < ActiveRecord::Base
 
   private
 
-  before_save :set_basecamp_project_name
+  before_validation :set_basecamp_project_name
 
   def set_basecamp_project_name
-    BasecampProject.find_by_basecamp_id(basecamp_project_id)
+    if basecamp_project_id.present?
+      proj = BasecampProject.find_by_basecamp_id(basecamp_project_id)
+      if proj.present?
+        self.basecamp_project_name = proj.data['name']
+      else
+        self.basecamp_project_name = 'Not found'
+        self.errors.add(:base, 'Could not find the project on Basecamp')
+      end
+    end
   end
 end

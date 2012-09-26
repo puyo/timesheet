@@ -1,11 +1,12 @@
-%h1 Timesheet Entry
+- content_for :breadcrumb do
+  %h1 Timesheet Entry
 
 .timesheet
 
   %form(action='/' method='get')
     %input.filter.date.from(type="text" placeholder="From" name="from" value="#{@from}")
     %input.filter.date.to(type="text" placeholder="To" name="to" value="#{@to}")
-    = submit_tag 'Update', :name => '', :class => 'btn btn-primary'
+    = submit_tag 'Update', :name => '', :class => 'btn'
   
     %form.form-inline
       %ul.nav.nav-pills

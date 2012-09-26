@@ -12,6 +12,6 @@ class BasecampProject < ActiveRecord::Base
   end
 
   def self.find_by_basecamp_id(id)
-    BasecampProject.where('data LIKE ?', %{%"id":#{id.to_i}%}).first
+    BasecampProject.where('data LIKE ?', %{%id: #{id.to_i}%}).first
   end
 end
