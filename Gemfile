@@ -19,7 +19,7 @@ group :assets do
 end
 
 group :development, :test do
-  gem 'ruby-debug', :require => nil
+  gem 'debugger', :require => nil
 end
 
 group :development do
